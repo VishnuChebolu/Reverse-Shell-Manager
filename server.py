@@ -27,7 +27,7 @@ def reliable_recv(s):
             continue
 class victim:
 
-    def device(self,args):
+    def use(self,args):
         conn = connections[int(args)-1]
         while True:
             try:
@@ -44,21 +44,19 @@ class victim:
                 addresses.pop(pos)
                 break
         
-    def devices(self):
-        Log.info("Available devices are :")
-        for _,i in enumerate(connections):
-            print(f'\t[{_}]: {i.raddr}')
-
-    def show(self):
-        for i in connections:
-            print(i)
-        self.home()
+    def show(self,args):
+        if args == 'devices':
+            Log.info("Available devices are :")
+            for _,i in enumerate(addresses):
+                print(f'\t[{_}]- {i[0]}:{i[1]}')
+        else:
+            Log.error(f"Unknown {args}")
 
     def help(self):
-        print('Available commads: ')
-        print('\t [1] devices -> displays all the available devices.')
+        Log.info('Available commads: ')
+        print('\t [1] show devices -> displays all the available devices.')
         print('\t [2] home ->switch to home panel.')
-        print('\t [3] device [N] ->switch to Nth connection.')
+        print('\t [3] use [N] ->switch to Nth connection.')
         self.home()
         
 
