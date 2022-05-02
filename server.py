@@ -8,7 +8,7 @@ import pyfiglet
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('127.0.0.1', 4444))
+s.bind(('10.7.10.233', 4444))
 s.listen()
 
 
